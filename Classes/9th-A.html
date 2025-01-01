@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWT - Online Testing System</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-----------Name Section ------->
+    <div id="student-name-section">
+        <h2>Welcome!</h2>
+        <label for="student-name">Enter your name:</label>
+        <input type="text" id="student-name" placeholder="Your name"/>
+        <p><small id="name-error">Please Enter Your Full Name</small></p>
+        <button onclick="startQuiz_1()">Start</button>
+    </div>
+    <!-- End of the Name Section -->
+    <div class="app" id="quiz-section">
+        <h1>Grade 7th-'A' Computer-Science</h1>
+        <p>2<sup>nd</sup> Marking period Test</p>
+        <p id="question-timer">Time left: <span id="timer"> </span></p>
+
+        <div class="quiz">
+            <p><i>Question:</i></p>
+            <h2 id="question">Question goes here</h2>
+            <div id="answer-buttons">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+
+
+
+    <script src="/scripts/9thscript.js"></script>
+</body>
+</html>

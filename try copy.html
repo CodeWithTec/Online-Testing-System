@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>45-Minute Countdown Timer</title>
+    <style>
+        /* Simple styling for the timer */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .timer {
+            font-size: 3em;
+            font-weight: bold;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Timer Display -->
+    <div class="timer" id="countdown"></div>
+    <div id="message"></div>
+
+    <!-- Script for Timer -->
+    <script>
+        // Countdown duration in seconds (45 minutes)
+        const countdownTime = 2 * 60; // 45 minutes * 60 seconds
+        let timeLeft = countdownTime;  // Variable to track the remaining time
+
+        // Function to format the time in mm:ss format
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secondsRemaining = seconds % 60;
+            return `${minutes < 10 ? '0' + minutes : minutes}:${secondsRemaining < 10 ? '0' + secondsRemaining : secondsRemaining}`;
+        }
+
+        // Function to start the countdown
+        function startCountdown() {
+            const countdownDisplay = document.getElementById('countdown');  // Get the element to display the countdown
+            const messageDisplay = document.getElementById('message');  // Get the element to show a message when the timer ends
+
+            // Update the display every second
+            const interval = setInterval(function() {
+                // Display the formatted time
+                countdownDisplay.textContent = formatTime(timeLeft);
+
+                // When the timer reaches zero, stop the countdown and show a message
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    countdownDisplay.textContent = "00:00";  // Set to 00:00 when timer ends
+                    messageDisplay.textContent = "Time's up!";  // Display message
+                } else {
+                    timeLeft--;  // Decrease the time remaining by one second
+                }
+            }, 1000); // Update every 1000 milliseconds (1 second)
+        }
+
+        // Start the countdown when the page loads
+        window.onload = startCountdown;
+    </script>
+
+</body>
+</html>

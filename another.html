@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Testing System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.quiz-section {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+}
+
+h2, h3 {
+    text-align: center;
+}
+
+input[type="text"] {
+    padding: 8px;
+    width: 80%;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.hidden {
+    display: none;
+}
+
+#quiz-question {
+    margin-top: 20px;
+}
+
+#quiz-progress {
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+</style>
+<body>
+
+    <!-- Student Name Section -->
+    <div id="student-name-section" class="quiz-section">
+        <h2>Online Quiz</h2>
+        <label for="student-name">Enter your name:</label>
+        <input type="text" id="student-name" placeholder="Your name">
+        <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <!-- Quiz Section (hidden until quiz starts) -->
+    <div id="quiz-section" class="quiz-section hidden">
+        <h3 id="question-number"></h3>
+        <p id="question-timer">Time left: <span id="timer"></span></p>
+        <p id="question-time-range"></p>
+        
+        <div id="quiz-question"></div>
+        
+        <button id="next-button" onclick="nextQuestion()">Next Question</button>
+        <p id="quiz-progress"></p>
+    </div>
+
+    <!-- Result Section (hidden until quiz ends) -->
+    <div id="result-section" class="quiz-section hidden">
+        <h3>Quiz Completed</h3>
+        <p id="student-result"></p>
+        <button onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+
+    <script>
+        // Array to hold questions and choices
+const questions = [
+    {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "Rome"],
+        answer: "Paris",
+        timeLimit: 30 // 30 seconds for this question
+    },
+    {
+        question: "Which language is used for web development?",
+        options: ["C#", "JavaScript", "Java", "Python"],
+        answer: "JavaScript",
+        timeLimit: 20 // 20 seconds for this question
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars",
+        timeLimit: 25 // 25 seconds for this question
+    }
+];
+
+// Variables to keep track of the quiz state
+let currentQuestionIndex = 0;
+let timer;
+let timeRemaining;
+let studentName = "";
+let score = 0;
+
+// Function to start the quiz
+function startQuiz() {
+    studentName = document.getElementById("student-name").value.trim();
+    if (studentName === "") {
+        alert("Please enter your name to start the quiz.");
+        return;
+    }
+
+    // Hide the name input section and show the quiz section
+    document.getElementById("student-name-section").classList.add("hidden");
+    document.getElementById("quiz-section").classList.remove("hidden");
+
+    showQuestion();
+}
+
+// Function to display the current question
+function showQuestion() {
+    const questionObj = questions[currentQuestionIndex];
+    
+    // Display question number and time range
+    document.getElementById("question-number").innerText = `Question ${currentQuestionIndex + 1}`;
+    document.getElementById("question-time-range").innerText = `Start Time: ${new Date().toLocaleTimeString()} | Time Limit: ${questionObj.timeLimit} seconds`;
+
+    // Display question and options
+    const questionDisplay = document.getElementById("quiz-question");
+    questionDisplay.innerHTML = `
+        <p>${questionObj.question}</p>
+        <div>
+            ${questionObj.options.map((option, index) => {
+                return `<label>
+                    <input type="radio" name="answer" value="${option}"> ${option}
+                </label><br>`;
+            }).join('')}
+        </div>
+    `;
+
+    // Start the countdown timer for this question
+    timeRemaining = questionObj.timeLimit;
+    document.getElementById("timer").innerText = timeRemaining;
+    clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+    
+    // Disable next button initially
+    document.getElementById("next-button").disabled = true;
+}
+
+// Function to update the timer
+function updateTimer() {
+    timeRemaining--;
+    document.getElementById("timer").innerText = timeRemaining;
+
+    // When the timer runs out, automatically move to the next question
+    if (timeRemaining <= 0) {
+        clearInterval(timer);
+        nextQuestion();
+    }
+}
+
+// Function to move to the next question
+function nextQuestion() {
+    const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+    
+    if (selectedAnswer) {
+        if (selectedAnswer.value === questions[currentQuestionIndex].answer) {
+            score++;
+        }
+    }
+
+    // Move to the next question or show results if it's the last question
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        showQuestion();
+    } else {
+        showResults();
+    }
+}
+
+// Function to show the results
+function showResults() {
+    // Hide the quiz section and show the result section
+    document.getElementById("quiz-section").classList.add("hidden");
+    const resultSection = document.getElementById("result-section");
+    resultSection.classList.remove("hidden");
+
+    // Display the student's name and score
+    document.getElementById("student-result").innerHTML = `${studentName}, you completed the quiz!<br> Your score: ${score} out of ${questions.length}`;
+}
+
+// Function to restart the quiz
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    document.getElementById("result-section").classList.add("hidden");
+    document.getElementById("student-name-section").classList.remove("hidden");
+    document.getElementById("student-name").value = "";
+}
+
+    </script>
+</body>
+</html>
